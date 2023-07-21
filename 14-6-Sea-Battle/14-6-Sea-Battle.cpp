@@ -59,9 +59,11 @@ void printField(bool field[SIZE][SIZE])
     std::cout << '\n';
 
     // вводим строки и заполняем их символами ■ и -
-    for (int i = 0; i < SIZE; i++) {
+    for (int i = 0; i < SIZE; i++) 
+    {
         std::cout << i << " ";
-        for (int j = 0; j < SIZE; ++j) {
+        for (int j = 0; j < SIZE; ++j) 
+        {
             if (field[i][j])
                 std::cout << "■ ";
             else
@@ -72,112 +74,142 @@ void printField(bool field[SIZE][SIZE])
 }
 
 // Функция для размещения одного корабля на поле
-bool placeShip(bool field[SIZE][SIZE], int x1, int y1, int x2, int y2) {
+bool placeShip(bool field[SIZE][SIZE], int x1, int y1, int x2, int y2)
+{
     if (x1 < 0 || x1 >= SIZE || y1 < 0 || y1 >= SIZE ||
-        x2 < 0 || x2 >= SIZE || y2 < 0 || y2 >= SIZE) {
-        std::cout << "Ошибка! Корабль выходит за пределы поля." << '\n';
+        x2 < 0 || x2 >= SIZE || y2 < 0 || y2 >= SIZE) 
+    {
+        std::cout << "Error! Ship is out of field" << '\n';
         return false;
     }
 
     // проверка на диоганаль
-    if (x1 != x2 && y1 != y2) {
-        std::cout << "Ошибка! Корабль должен быть расположен вертикально или горизонтально." << '\n';
+    if (x1 != x2 && y1 != y2) 
+    {
+        std::cout << "Error! The ship must be vertical or horizontal." << '\n';
         return false;
     }
 
     // пересекаечение кораблей
-    for (int i = x1; i <= x2; i++) {
-        for (int j = y1; j <= y2; j++) {
-            if (field[i][j]) {
-                std::cout << "Ошибка! Корабль пересекается с другими кораблями." << '\n';
+    for (int i = x1; i <= x2; i++) 
+    {
+        for (int j = y1; j <= y2; j++) 
+        {
+            if (field[i][j]) 
+            {
+                std::cout << "Error! The ship intersects with other ships." << '\n';
                 return false;
             }
         }
     }
 
-    for (int i = x1; i <= x2; i++) {
-        for (int j = y1; j <= y2; j++) {
+    // заполнение ячеек кораблем
+    for (int i = x1; i <= x2; i++) 
+    {
+        for (int j = y1; j <= y2; j++) 
+        {
             field[i][j] = true;
         }
     }
-
     return true;
 }
 
 // Функция для размещения всех кораблей одного игрока
-void placeAllShips(bool field[SIZE][SIZE]) {
-    std::cout << "Размещение кораблей:" << '\n';
+void placeAllShips(bool field[SIZE][SIZE]) 
+{
+    std::cout << "Place of crusts on ships: " << '\n';
 
     int singleShipCount = 4;
     int doubleShipCount = 3;
     int tripleShipCount = 2;
     int quadShipCount = 1;
 
-    while (singleShipCount + doubleShipCount + tripleShipCount + quadShipCount > 0) {
+    while (singleShipCount + doubleShipCount + tripleShipCount + quadShipCount > 0) 
+    {
         printField(field);
 
         int x1, y1, x2, y2;
+        int ship;
 
-        std::cout << "Введите координаты корабля: ";
+        if (singleShipCount > 0) ship = 1;
+        else if (doubleShipCount > 0) ship = 2;
+        else if (tripleShipCount > 0) ship = 3;
+        else if (quadShipCount > 0) ship = 4;
+
+        std::cout << "Enter the coordinates of the " << ship << " cell: ";
         std::cin >> x1 >> y1;
 
-        if (singleShipCount > 0) {
+        if (singleShipCount > 0) 
+        {
             x2 = x1;
             y2 = y1;
-            if (placeShip(field, x1, y1, x2, y2)) {
+            if (placeShip(field, x1, y1, x2, y2)) 
+            {
                 singleShipCount--;
                 continue;
             }
         }
 
-        std::cout << "Введите вторые координаты корабля: ";
+        std::cout << "Enter the second coordinates of the ship: ";
         std::cin >> x2 >> y2;
 
         int size = std::max(abs(x1 - x2), abs(y1 - y2)) + 1;
 
-        if (size == 2 && doubleShipCount > 0) {
-            if (placeShip(field, x1, y1, x2, y2)) {
+        if (size == 2 && doubleShipCount > 0) 
+        {
+            if (placeShip(field, x1, y1, x2, y2)) 
+            {
                 doubleShipCount--;
                 continue;
             }
         }
-        else if (size == 3 && tripleShipCount > 0) {
-            if (placeShip(field, x1, y1, x2, y2)) {
+        else if (size == 3 && tripleShipCount > 0) 
+        {
+            if (placeShip(field, x1, y1, x2, y2)) 
+            {
                 tripleShipCount--;
                 continue;
             }
         }
-        else if (size == 4 && quadShipCount > 0) {
-            if (placeShip(field, x1, y1, x2, y2)) {
+        else if (size == 4 && quadShipCount > 0) 
+        {
+            if (placeShip(field, x1, y1, x2, y2)) 
+            {
                 quadShipCount--;
                 continue;
             }
         }
-
-        std::cout << "Ошибка! Невозможно разместить корабль с такими координатами." << '\n';
+        std::cout << "Error! It is impossible to place a ship with such coordinates." << '\n';
     }
 }
 
 // Функция для удара по координате на поле противника
-void attack(bool field[SIZE][SIZE], bool enemyField[SIZE][SIZE], int x, int y) {
-    if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {
-        std::cout << "Ошибка! Некорректные координаты выстрела." << '\n';
+void attack(bool field[SIZE][SIZE], bool enemyField[SIZE][SIZE], int x, int y) 
+{
+    if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) 
+    {
+        std::cout << "Error! Incorrect firing coordinates." << '\n';
         return;
     }
 
-    if (enemyField[x][y]) {
-        std::cout << "Попадание!" << '\n';
+    if (enemyField[x][y]) 
+    {
+        std::cout << "Ship is shot down" << '\n';
         field[x][y] = false;
     }
-    else {
-        std::cout << "Мимо!" << '\n';
+    else 
+    {
+        std::cout << "Missed the mark!" << '\n';
     }
 }
 
 // Функция для проверки, остались ли корабли на поле
-bool hasShipsLeft(bool field[SIZE][SIZE]) {
-    for (int i = 0; i < SIZE; ++i) {
-        for (int j = 0; j < SIZE; ++j) {
+bool hasShipsLeft(bool field[SIZE][SIZE]) 
+{
+    for (int i = 0; i < SIZE; ++i) 
+    {
+        for (int j = 0; j < SIZE; ++j) 
+        {
             if (field[i][j])
                 return true;
         }
@@ -185,41 +217,42 @@ bool hasShipsLeft(bool field[SIZE][SIZE]) {
     return false;
 }
 
-int main() {
-    std::cout << "Игрок 1, разместите свои корабли:" << '\n';
+int main() 
+{
+    std::cout << "Player 1, place your ships:" << '\n';
     placeAllShips(field_1);
 
-    std::cout << "Игрок 2, разместите свои корабли:" << '\n';
+    std::cout << "Player 2, place your ships:" << '\n';
     placeAllShips(field_2);
 
     int currentPlayer = 1;
 
-    while (true) {
-        std::cout << "Ход игрока " << currentPlayer << '\n';
+    while (true) 
+    {
+        std::cout << "Player's turn " << currentPlayer << '\n';
         int x, y;
-        std::cout << "Введите координаты выстрела: ";
+        std::cout << "Enter the coordinates of the shot: ";
         std::cin >> x >> y;
 
-        if (currentPlayer == 1) {
+        if (currentPlayer == 1) 
+        {
             attack(field_2, field_1, x, y);
-            if (!hasShipsLeft(field_2)) {
-                std::cout << "Игрок 1 победил!" << '\n';
+            if (!hasShipsLeft(field_2)) 
+            {
+                std::cout << "Player 1 wins!" << '\n';
                 break;
             }
         }
-        else {
+        else
+        {
             attack(field_1, field_2, x, y);
-            if (!hasShipsLeft(field_1)) {
-                std::cout << "Игрок 2 победил!" << '\n';
+            if (!hasShipsLeft(field_1))
+            {
+                std::cout << "Player 2 wins!" << '\n';
                 break;
             }
         }
-
-     
-
-
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
     }
-
     return 0;
 }
